@@ -1,6 +1,5 @@
-import axios from "axios";
 import moment from "moment";
-import React, { FC, useEffect } from "react";
+import { FC } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface ArticleProps {}

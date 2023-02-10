@@ -1,20 +1,25 @@
-import { isEmpty } from "lodash";
-import React, { FC, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { FC, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import Card from "../common/components/Card";
 import LoadMoreButton from "../common/components/LoadMoreBtn";
 import Loading from "../common/components/Loading";
 import useSearchNews from "../common/hooks/useSearchNews";
+import { CommonState, setSearchTerm } from "../redux/common";
+import { RootState } from "../redux/store";
 interface SearchPageProps {}
 
 const SearchPage: FC<SearchPageProps> = () => {
   const navigate = useNavigate();
+  const { searchTerm } = useSelector<RootState, CommonState>(
+    (state: any) => state.common
+  );
+
+  const dispatch = useDispatch();
 
   const [pageSize, setPageSize] = useState(20);
-  const location = useLocation();
   const [sortBy, setSortBy] = useState("popularity");
-  const [searchTerm, setSearchTerm] = useState(location.state.searchTerm);
   const { data, status, isRefetching, isLoading, refetch } = useSearchNews({
     search: searchTerm,
     sortBy,
@@ -66,7 +71,7 @@ const SearchPage: FC<SearchPageProps> = () => {
               className="w-64 p-2 bg-white text-black rounded-sm"
               placeholder="Search news..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => dispatch(setSearchTerm(e.target.value))}
             />
           </form>
         </div>
@@ -79,18 +84,17 @@ const SearchPage: FC<SearchPageProps> = () => {
             ))
           ) : null}
         </div>
-
-        {data?.articles?.length && (
+        {data?.articles?.length ? (
           <LoadMoreButton onClick={loadMore} isLoading={isRefetching} />
-        )}
+        ) : null}
       </main>
-      {data?.articles?.length && (
+      {data?.articles?.length ? (
         <footer className="bg-white py-6">
           <div className="container mx-auto px-4">
             <p className="text-center text-gray-600">&copy;2023 News</p>
           </div>
         </footer>
-      )}
+      ) : null}
     </div>
   );
 };

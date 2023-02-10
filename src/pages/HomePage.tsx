@@ -1,15 +1,22 @@
 import React, { FC, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import Card from "../common/components/Card";
 import LoadMoreButton from "../common/components/LoadMoreBtn";
 import useGetNews from "../common/hooks/useGetNews";
+import { CommonState, setSearchTerm } from "../redux/common";
+import { RootState } from "../redux/store";
 
 interface HomePageProps {}
 
 const HomePage: FC<HomePageProps> = () => {
   const [pageSize, setPageSize] = useState(20);
-  const [searchTerm, setSearchTerm] = useState("");
+  const { searchTerm } = useSelector<RootState, CommonState>(
+    (state: any) => state.common
+  );
+
+  const dispatch = useDispatch();
   const navigation = useNavigate();
   const { data, status } = useGetNews({ pageSize });
 
@@ -37,7 +44,7 @@ const HomePage: FC<HomePageProps> = () => {
               className="w-64 p-2 bg-gray-800 text-white rounded-full"
               placeholder="Search news..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => dispatch(setSearchTerm(e.target.value))}
             />
           </form>
         </div>
